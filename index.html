@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="description" content="LEVEL UP — your personal daily routine and habit tracker">
+<link rel="manifest" href="manifest.webmanifest">
+<title>LEVEL UP</title>
+<style>
+:root{--bg:#0b1020;--panel:#151d31;--panel2:#1d2940;--text:#f4f6fb;--muted:#aab5ca;--accent:#b8e0c2;--line:#2b3851;--gold:#f1c879;--blue:#8fc8ed}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101a2c,#080c17 65%);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.app{max-width:760px;margin:auto;padding:18px 15px 40px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 20px}.brand{font-size:23px;font-weight:850;letter-spacing:2px}.sub{color:var(--muted);font-size:12px}.date{color:var(--muted);font-size:12px;text-align:right}
+.hero{background:linear-gradient(135deg,#263b50,#17243a);border:1px solid #3a5268;border-radius:22px;padding:20px;margin-bottom:15px}.hero h1{font-size:23px;margin:0 0 5px}.hero p{color:#d2dce9;margin:0 0 18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#101a2c99;padding:11px;border-radius:13px}.stat b{display:block;font-size:21px}.stat span{font-size:11px;color:#c3cfdf}
+.progress{height:9px;background:#33445b;border-radius:99px;overflow:hidden;margin-top:7px}.progress i{display:block;height:100%;background:var(--accent);width:0%;transition:.2s}
+.tabs{display:flex;gap:7px;overflow:auto;padding:3px 0 12px;position:sticky;top:0;background:#0b1020f2;z-index:3}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:9px 13px;white-space:nowrap;font-weight:650}.tab.active{background:var(--accent);color:#13251a;border-color:var(--accent)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin:0 0 13px}.panel h2{font-size:17px;margin:0 0 4px}.hint{color:var(--muted);font-size:12px;margin:0 0 12px}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.task{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}.task input{width:19px;height:19px;accent-color:#8bcaa0;flex-shrink:0}.task .name{flex:1}.task.done .name{text-decoration:line-through;color:#8290a7}.time{font-size:11px;color:var(--muted);white-space:nowrap}
+button,input,textarea,select{font:inherit}button{cursor:pointer}.smallbtn,.primary,.ghost{border:0;border-radius:11px;padding:10px 13px;font-weight:700}.primary{background:var(--accent);color:#14251b}.ghost,.smallbtn{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.smallbtn{padding:7px 10px;font-size:12px}
+input[type=text],textarea,select{width:100%;background:#0e1728;border:1px solid var(--line);border-radius:11px;color:var(--text);padding:11px;outline:none}textarea{min-height:85px;resize:vertical}.addrow{display:flex;gap:8px;margin-top:10px}.addrow input{flex:1;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.tile{background:var(--panel2);padding:13px;border-radius:13px}.tile b{display:block;margin-bottom:3px}.tile small{color:var(--muted)}
+.water{font-size:22px;font-weight:800}.cups{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.cup{width:28px;height:35px;border:1px solid #53718c;border-radius:5px 5px 9px 9px;background:#0c1726}.cup.full{background:#67b7e5;border-color:#67b7e5}
+label.field{display:block;color:var(--muted);font-size:12px;margin:12px 0 5px}.meal,.planitem{padding:10px 0;border-bottom:1px solid var(--line)}.meal:last-child,.planitem:last-child{border:0}
+footer{text-align:center;color:#78869e;font-size:11px;padding:18px 8px}
+@media(min-width:600px){.app{padding:25px}.hero{padding:25px}.panel{padding:20px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><div><div class="brand">LEVEL UP <span style="color:var(--gold)">✦</span></div><div class="sub">Small steps. Steady progress.</div></div><div class="date" id="today"></div></header>
+  <section class="hero">
+    <h1 id="greeting">Good day.</h1><p>Your balanced daily plan — built around a 7:00 AM start and 10:30 PM bedtime.</p>
+    <div class="stats"><div class="stat"><b id="percent">0%</b><span>Daily progress</span></div><div class="stat"><b id="completed">0/0</b><span>Tasks done</span></div><div class="stat"><b id="heroWater">0/8</b><span>Water glasses</span></div></div>
+    <div class="progress"><i id="bar"></i></div>
+    <div class="sub" style="margin-top:8px">Aim for steady progress, not a perfect score.</div>
+  </section>
+  <nav class="tabs">
+    <button class="tab active" data-tab="today">Today</button><button class="tab" data-tab="fitness">Fitness</button><button class="tab" data-tab="food">Meals</button><button class="tab" data-tab="guitar">Guitar</button><button class="tab" data-tab="career">Career</button><button class="tab" data-tab="progress">Progress</button><button class="tab" data-tab="settings">Settings</button>
+  </nav>
+  <main>
+    <section id="today" class="view">
+      <div class="panel"><h2>Today's routine</h2><p class="hint">Tick things off as you complete them. Adjust the schedule to suit your day.</p><div id="routine"></div><div class="addrow"><input id="newTask" type="text" placeholder="Add a task for today"><button class="primary" id="addTask">Add</button></div></div>
+      <div class="panel"><div class="row between"><div><h2>Water tracker</h2><p class="hint">A simple reminder to drink regularly.</p></div><div class="water"><span id="waterCount">0</span>/8</div></div><div class="cups" id="cups"></div><button class="ghost" id="waterAdd">＋ Add a glass</button> <button class="ghost" id="waterMinus">− Undo</button></div>
+      <div class="panel"><h2>Daily reflection</h2><p class="hint">One thing that went well, and one thing to improve tomorrow.</p><textarea id="reflection" placeholder="Write a few lines..."></textarea><button class="primary" style="margin-top:9px" id="saveReflection">Save reflection</button><span class="sub" id="savedMsg" style="margin-left:8px"></span></div>
+    </section>
+    <section id="fitness" class="view" hidden>
+      <div class="panel"><h2>Weekly movement plan</h2><p class="hint">A flexible beginner-friendly template. Keep rest and recovery days.</p><div id="workoutPlan"></div></div>
+      <div class="panel"><h2>Movement log</h2><p class="hint">Record what you did — no need to chase numbers.</p><div class="addrow"><input id="workoutInput" type="text" placeholder="e.g. 20-minute walk"><button class="primary" id="logWorkout">Log</button></div><div id="workoutLogs"></div></div>
+    </section>
+    <section id="food" class="view" hidden>
+      <div class="panel"><h2>Balanced meal guide</h2><p class="hint">Use this as inspiration, not a strict diet. Eat enough, include variety, and adapt to your preferences.</p>
+        <div class="meal"><b>Breakfast · 8:00 AM</b><div class="sub">Idli/dosa or oats, with sambar, eggs, curd or another protein option and fruit.</div></div>
+        <div class="meal"><b>Lunch · 1:00 PM</b><div class="sub">Rice/roti, dal or beans, vegetables, curd and a protein you enjoy.</div></div>
+        <div class="meal"><b>Evening snack · 4:30 PM</b><div class="sub">Fruit, nuts, yoghurt, sprouts or a filling snack.</div></div>
+        <div class="meal"><b>Dinner · 8:00 PM</b><div class="sub">A satisfying meal with grains, vegetables and protein.</div></div>
+        <div class="meal"><b>Flexible note</b><div class="sub">Drink water through the day; adjust portions to hunger, activity and your needs.</div></div>
+      </div>
+    </section>
+    <section id="guitar" class="view" hidden>
+      <div class="panel"><h2>Guitar practice</h2><p class="hint">A suggested 25-minute session. Keep it enjoyable and consistent.</p>
+        <div class="planitem"><b>5 min · Warm up</b><div class="sub">Easy finger movement and relaxed chord changes.</div></div>
+        <div class="planitem"><b>8 min · Chords & transitions</b><div class="sub">Practice a few chords slowly and cleanly.</div></div>
+        <div class="planitem"><b>7 min · Rhythm</b><div class="sub">Strumming or picking with a steady beat.</div></div>
+        <div class="planitem"><b>5 min · Song time</b><div class="sub">Play a song you enjoy or review something learned.</div></div>
+        <label class="field" for="guitarNotes">What did you practise today?</label><textarea id="guitarNotes" placeholder="Chords, song, technique, what felt easier..."></textarea><button class="primary" style="margin-top:9px" id="saveGuitar">Save practice</button><div class="sub" id="guitarSaved"></div>
+      </div>
+      <div class="panel"><h2>Practice history</h2><div id="guitarHistory" class="sub">Your saved practice notes will appear here.</div></div>
+    </section>
+    <section id="career" class="view" hidden>
+      <div class="panel"><h2>Career & learning block</h2><p class="hint">Use a focused block for job search, marketing skills and portfolio growth.</p>
+        <div class="planitem"><b>Job search</b><div class="sub">Check suitable roles, tailor applications and track follow-ups.</div></div>
+        <div class="planitem"><b>Digital marketing</b><div class="sub">Rotate through SEO, content strategy, social media, analytics, Google Ads and Meta Ads fundamentals.</div></div>
+        <div class="planitem"><b>Portfolio</b><div class="sub">Create a sample campaign, content calendar or short case study.</div></div>
+        <label class="field" for="careerGoal">Today's career priority</label><input id="careerGoal" type="text" placeholder="e.g. Learn keyword research for 30 minutes"><button class="primary" style="margin-top:9px" id="saveCareer">Save priority</button><div class="sub" id="careerSaved"></div>
+      </div>
+    </section>
+    <section id="progress" class="view" hidden>
+      <div class="panel"><h2>Progress overview</h2><p class="hint">A quick look at your consistency today.</p><div class="grid"><div class="tile"><b id="pDone">0</b><small>Tasks completed today</small></div><div class="tile"><b id="pRate">0%</b><small>Completion rate</small></div><div class="tile"><b id="pWater">0/8</b><small>Glasses logged</small></div><div class="tile"><b id="pGuitar">Not yet</b><small>Guitar practice</small></div></div></div>
+      <div class="panel"><h2>Weekly check-in</h2><p class="hint">At the end of the week, reflect on consistency, energy, learning and what you enjoyed. Progress is not perfection.</p><textarea id="weeklyReview" placeholder="What worked this week? What would make next week easier?"></textarea><button class="primary" style="margin-top:9px" id="saveWeekly">Save weekly review</button><div class="sub" id="weeklySaved"></div></div>
+    </section>
+    <section id="settings" class="view" hidden>
+      <div class="panel"><h2>Your schedule</h2><p class="hint">Default routine starts at 7:00 AM and winds down at 10:30 PM.</p><label class="field">Wake-up time</label><select id="wake"><option>6:00 AM</option><option selected>7:00 AM</option><option>8:00 AM</option><option>8:30 AM</option></select><label class="field">Bedtime</label><select id="bed"><option>9:30 PM</option><option>10:00 PM</option><option selected>10:30 PM</option><option>11:00 PM</option></select><button class="primary" style="margin-top:12px" id="saveSettings">Save schedule</button><div class="sub" id="settingsSaved"></div></div>
+      <div class="panel"><h2>Reminders</h2><p class="hint">This starter version can ask your browser to show a test notification while the app is open. Reliable scheduled Android reminders need a hosted app or native Android build.</p><button class="ghost" id="notify">Enable/test notification permission</button><div class="sub" id="notifyMsg" style="margin-top:8px"></div></div>
+      <div class="panel"><h2>Data & reset</h2><p class="hint">Your routine data is stored locally in this browser on this device.</p><button class="ghost" id="export">Export my data</button> <button class="ghost" id="reset">Reset today's checklist</button></div>
+    </section>
+  </main>
+  <footer>LEVEL UP · Built for steady, balanced progress.</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id), todayKey=new Date().toISOString().slice(0,10), storeKey='levelup-v1';
+const defaultTasks=[
+['7:00 AM','Wake up, make bed & open the curtains','Morning'],['7:15 AM','Brush, wash up and get ready','Morning'],['7:30 AM','Water, fresh air and a gentle start','Morning'],['8:00 AM','Breakfast','Meals'],['8:30 AM','Workout, walk or mobility','Fitness'],['9:15 AM','Shower and prepare for the day','Morning'],['10:00 AM','Career learning / job applications','Career'],['11:00 AM','Focused work or personal project','Career'],['1:00 PM','Lunch and proper break','Meals'],['2:00 PM','Skill development / portfolio','Career'],['4:30 PM','Snack and short reset','Meals'],['5:00 PM','Walk, outdoor time or free movement','Fitness'],['6:00 PM','Guitar practice','Guitar'],['7:00 PM','Personal time / content creation / hobbies','Personal'],['8:00 PM','Dinner','Meals'],['9:00 PM','Prepare tomorrow’s priorities','Night'],['9:30 PM','Relax, read or journal','Night'],['10:00 PM','Screens down and bedtime routine','Night'],['10:30 PM','Sleep','Night']];
+const week=[['Monday','Full-body strength or bodyweight basics'],['Tuesday','Walk, cycling or enjoyable cardio'],['Wednesday','Strength + mobility'],['Thursday','Recovery walk / stretching'],['Friday','Strength or sport'],['Saturday','Outdoor activity you enjoy'],['Sunday','Rest and gentle reset']];
+let data=JSON.parse(localStorage.getItem(storeKey)||'{}');
+if(data.date!==todayKey){data={...data,date:todayKey,checks:{},water:0,reflection:'',custom:[],workouts:[]};save();}
+function save(){localStorage.setItem(storeKey,JSON.stringify(data));}
+function tasks(){return defaultTasks.map((t,i)=>({id:'d'+i,time:t[0],name:t[1],group:t[2],custom:false,done:!!data.checks['d'+i]})).concat((data.custom||[]).map(t=>({...t,done:!!data.checks[t.id]})));}
+function renderRoutine(){let arr=tasks();$('routine').innerHTML='';let last='';arr.forEach(t=>{if(t.group!==last){last=t.group;let h=document.createElement('div');h.className='sub';h.style.cssText='font-weight:800;color:var(--gold);padding:13px 0 2px;text-transform:uppercase;letter-spacing:1px';h.textContent=last;$('routine').append(h)}let row=document.createElement('label');row.className='task'+(t.done?' done':'');let cb=document.createElement('input');cb.type='checkbox';cb.checked=t.done;cb.addEventListener('change',()=>{data.checks[t.id]=cb.checked;save();renderAll()});let name=document.createElement('span');name.className='name';name.textContent=t.name;let time=document.createElement('span');time.className='time';time.textContent=t.time||'';row.append(cb,name,time);$('routine').append(row)});}
+function renderWater(){$('waterCount').textContent=data.water||0;$('cups').innerHTML='';for(let i=0;i<8;i++){let c=document.createElement('span');c.className='cup'+(i<(data.water||0)?' full':'');$('cups').append(c)}}
+function renderAll(){renderRoutine();renderWater();let arr=tasks(),done=arr.filter(t=>t.done).length,pct=Math.round(done/arr.length*100);$('percent').textContent=pct+'%';$('completed').textContent=done+'/'+arr.length;$('bar').style.width=pct+'%';$('pDone').textContent=done;$('pRate').textContent=pct+'%';$('pWater').textContent=(data.water||0)+'/8';$('heroWater').textContent=(data.water||0)+'/8';$('pGuitar').textContent=data.guitarNotes?'Practised':'Not yet';$('reflection').value=data.reflection||'';$('workoutLogs').innerHTML=(data.workouts||[]).map(x=>'<div class="planitem">✓ '+esc(x)+'</div>').join('');}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==b.dataset.tab)}));
+$('today').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});let hr=new Date().getHours();$('greeting').textContent=hr<12?'Good morning.':hr<17?'Good afternoon.':'Good evening.';
+$('addTask').onclick=()=>{let v=$('newTask').value.trim();if(!v)return;data.custom.push({id:'c'+Date.now(),time:'Anytime',name:v,group:'Personal',custom:true});$('newTask').value='';save();renderAll()};
+$('waterAdd').onclick=()=>{data.water=(data.water||0)+1;save();renderAll()};$('waterMinus').onclick=()=>{data.water=Math.max(0,(data.water||0)-1);save();renderAll()};
+$('saveReflection').onclick=()=>{data.reflection=$('reflection').value;save();$('savedMsg').textContent='Saved on this device.'};
+$('workoutPlan').innerHTML=week.map(x=>'<div class="planitem"><b>'+x[0]+'</b><div class="sub">'+x[1]+'</div></div>').join('');
+$('logWorkout').onclick=()=>{let v=$('workoutInput').value.trim();if(!v)return;data.workouts.unshift(v);$('workoutInput').value='';save();renderAll()};
+$('saveGuitar').onclick=()=>{data.guitarNotes=$('guitarNotes').value;data.guitarHistory=data.guitarHistory||[];if(data.guitarNotes)data.guitarHistory.unshift({date:todayKey,note:data.guitarNotes});save();$('guitarSaved').textContent='Practice saved.';renderAll();renderGuitar()};
+function renderGuitar(){$('guitarNotes').value=data.guitarNotes||'';$('guitarHistory').innerHTML=(data.guitarHistory||[]).map(x=>'<div class="planitem"><b>'+esc(x.date)+'</b><div>'+esc(x.note)+'</div></div>').join('')||'Your saved practice notes will appear here.'}
+$('saveCareer').onclick=()=>{data.careerGoal=$('careerGoal').value;save();$('careerSaved').textContent='Priority saved.'};$('careerGoal').value=data.careerGoal||'';
+$('saveWeekly').onclick=()=>{localStorage.setItem('levelup-weekly', $('weeklyReview').value);$('weeklySaved').textContent='Weekly review saved.'};$('weeklyReview').value=localStorage.getItem('levelup-weekly')||'';
+$('saveSettings').onclick=()=>{data.wake=$('wake').value;data.bed=$('bed').value;save();$('settingsSaved').textContent='Schedule saved.'};$('wake').value=data.wake||'7:00 AM';$('bed').value=data.bed||'10:30 PM';
+$('notify').onclick=async()=>{if(!('Notification'in window)){$('notifyMsg').textContent='Notifications are not supported in this browser.';return}let p=await Notification.requestPermission();$('notifyMsg').textContent='Permission: '+p;if(p==='granted')new Notification('LEVEL UP',{body:'Your routine is ready. One small step at a time.'})};
+$('export').onclick=()=>{let blob=new Blob([JSON.stringify({today:data,weekly:localStorage.getItem('levelup-weekly')},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='level-up-data.json';a.click();URL.revokeObjectURL(a.href)};
+$('reset').onclick=()=>{if(confirm('Reset today’s checklist and water count?')){data.checks={};data.water=0;data.custom=[];data.workouts=[];data.reflection='';save();renderAll()}};
+renderAll();renderGuitar();
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
